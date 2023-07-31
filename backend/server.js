@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const User = require("./User/Auth");
 
 require("dotenv").config();
@@ -7,6 +8,8 @@ require("dotenv").config();
 
 //create the server app
 const server = express();
+
+server.use(cors());
 
 server.use(express.json());
 
