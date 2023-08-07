@@ -1,8 +1,16 @@
 const express = require("express");
+const session = require("express-session");
+const mongodbstore = require("connect-mongodb-session")(session);
 const cors = require("cors");
 const User = require("./User/Auth");
 
 require("dotenv").config();
+
+
+const store = new mongodbstore({
+    uri: "mongodb://localhost:27017/notex",
+    collection: "sessions"
+})
 
 
 
@@ -10,6 +18,13 @@ require("dotenv").config();
 const server = express();
 
 server.use(cors());
+
+server.use(session({
+    secret: "thisiswhateveriamputtingherethisworks",
+    saveUninitialized: false,
+    resave: false,
+    store: store
+}))
 
 server.use(express.json());
 
@@ -91,6 +106,11 @@ server.post("/login-user", async (request, response) => {
             data: null
         })
    }else{
+
+        //login the user into a session
+        console.log("Logs in the user")
+
+        request.session.user = result.data;
 
         return response.send({
             message: result.message,

@@ -50,7 +50,7 @@ const User = (function(){
         }else{
             //the user does not exist 
 
-            let password = await bcrypt.hash(password, 10)
+            password = await bcrypt.hash(password, 10)
 
             const user = {
                 firstname: firstname,

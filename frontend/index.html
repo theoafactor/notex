@@ -89,13 +89,13 @@
                         <button class="btn btn-md btn-primary">Log in</button>
                     </div>
                     <hr>
-
-                    <div class="form-group mt-2">
-                        <h5>Not Registered?</h5>
-                        <button class="btn btn-md btn-dark">Create Account</button>
-                    </div>
-
               </form>
+
+              <div class="form-group mt-2">
+                <h5>Not Registered?</h5>
+                <button class="btn btn-md btn-dark" onclick="loadRegisterModal()">Create Account</button>
+            </div>
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -105,7 +105,71 @@
       </div>
 
     <!-- End of Modals-->
-    
+
+    <!-- Register MOdal -->
+    <div class="modal" tabindex="-1" id="register-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Create Account</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <div id="form-info"></div>
+            <form method="POST" id="register-user-form">
+                  <div class="form-group">
+                    <label>First name</label>
+                    <input type="text" name='firstname' class="form-control" placeholder="Enter First name">
+                    <div><small id="firstname-info"></small></div>
+                </div>
+
+                  <div class="form-group">
+                    <label>Last name</label>
+                    <input type="text" name='lastname' class="form-control" placeholder="Enter Last name">
+                    <div><small id="lastname-info"></small></div>
+                </div>
+
+
+                  <div class="form-group">
+                      <label>Email</label>
+                      <input type="email" name='email' class="form-control" placeholder="Enter Email">
+                      <div><small id="email-info"></small></div>
+                  </div>
+
+                  <div class="form-group">
+                      <label>Password</label>
+                      <input type="password" name='password' class="form-control" placeholder="Enter Password">
+                      <div><small id="password-info"></small></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Password Confirm</label>
+                    <input type="password" name='password_confirm' class="form-control" placeholder="Enter Password">
+                    <div><small id="password-confirm--info"></small></div>
+                </div>
+
+                  <div class="form-group">
+                      <button class="btn btn-md btn-primary">Create Account</button>
+                  </div>
+                  <hr>
+            </form>
+
+            <div class="form-group mt-2">
+              <h5>Already Registered?</h5>
+              <button class="btn btn-md btn-dark" onclick="loadLoginModal()">Log in instead</button>
+          </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--End of Register Modal-->
     
 
 
@@ -196,6 +260,35 @@
     })
 
 
+    const registerUserForm = document.querySelector("#register-user-form");
+
+    registerUserForm.addEventListener("submit", async function(event){
+        event.preventDefault();
+
+        let firstname = this.firstname.value.trim();
+        let lastname = this.lastname.value.trim();
+
+        let email = this.email.value.trim();
+
+        let password = this.password.value.trim();
+
+
+        const feedback = await axios.post("http://localhost:4242/register-user", {
+          firstname, lastname, email, password
+        })
+
+        if(feedback.data.code === "success"){
+          alert("User created");
+
+          location.reload();
+        }else{
+          alert(feedback.data.message);
+
+        }
+
+    })
+
+
     function startSpinner(){
         let form_info = document.querySelector("#form-info");
         form_info.innerHTML = `<div class="spinner-border spinner-border-sm" role="status">
@@ -205,6 +298,22 @@
     }
 
     function stopSpinner(){
+
+    }
+
+
+    function loadRegisterModal(){
+          $("#login-modal").modal("hide");
+
+          $("#register-modal").modal("show");
+
+    }
+
+    function loadLoginModal(){
+      $("#register-modal").modal("hide");
+
+      $("#login-modal").modal("show");
+
 
     }
 
