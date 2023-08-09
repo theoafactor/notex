@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
-const mongodbstore = require("connect-mongodb-session")(session);
+const connectMongoDBStore = require("connect-mongodb-session");
+const mongodbstore = connectMongoDBStore(session);
 const cors = require("cors");
 const User = require("./User/Auth");
 
@@ -115,7 +116,8 @@ server.post("/login-user", async (request, response) => {
         return response.send({
             message: result.message,
             code: result.code,
-            data: result.data
+            data: result.data,
+            session: request.session.id
         })
 
 
@@ -126,6 +128,26 @@ server.post("/login-user", async (request, response) => {
 
 })
 
+
+server.post("/logout-user", function(request, response){
+
+    let token = request.body.token;
+
+    request.session.destroy(function(){
+
+        return response.send({
+            message: "User's session destroyed!",
+            code: "logout-success",
+            data: null,
+            type: "logout-user"
+        })
+
+    })
+
+   
+
+
+})
 
 
 //listening

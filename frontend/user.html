@@ -50,7 +50,7 @@
                 <div class="jumbotron">
                     <div class=""><h4>Welcome <span id="greeting-id"></span></h4></div>
                     <div class="">
-                        <button class="btn btn-lg btn-danger" data-toggle="modal" data-target="#login-modal">Log out</button>
+                        <button class="btn btn-lg btn-danger" onclick="logoutUser()">Log out</button>
                     </div>
                 </div>
             </div>
@@ -91,6 +91,34 @@
         document.querySelector("#greeting-id").innerHTML = firstname;
 
     })
+
+
+    async function logoutUser(){
+
+        const token = Cookies.get("notex");
+
+        if(token){
+          //remove the token...
+          Cookies.remove("notex")
+
+          //make an api request to delete the user session
+          const feedback = await axios.post("http://localhost:4242/logout-user", {
+              token
+          });
+
+          console.log(feedback)
+
+          if(feedback.data.code == "logout-success"){
+              const remove_user_feedback = await localforage.removeItem("notex-user");
+
+              location.replace("/")
+
+          }
+
+
+        }
+
+    }
 
 
 </script>

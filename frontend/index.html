@@ -230,13 +230,16 @@
                form_info.innerHTML = `<div class='alert alert-danger'>${feedback.data.message}</div>`
             }else{
 
+              console.log(feedback);
+
                 // you can now be logged in 
-                const token = feedback.data.data.token;
+                // const token = feedback.data.data.token;
+                const token = feedback.data.session;
                 const user = feedback.data.data.user;
 
-                Cookies.set("notex", token, { expires: 7 })
+                 Cookies.set("notex", token, { expires: 7 })
 
-                const user_stored = await localforage.setItem("notex-user", JSON.stringify(user))
+                 const user_stored = await localforage.setItem("notex-user", JSON.stringify(user))
 
                 if(user_stored){
                     location.replace("user.html");
