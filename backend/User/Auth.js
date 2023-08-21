@@ -1,6 +1,19 @@
 require("dotenv").config();
 const mongodb = require("mongodb");
+const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
+
+const transporter = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 587,
+    secure: false,
+    auth: {
+      // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+      user: '150f30b4a37e66',
+      pass: 'b5e66bcfb8b5eb'
+    }
+  });
+
 
 //create a client
 const client = new mongodb.MongoClient(process.env.DB_URL);
@@ -56,7 +69,8 @@ const User = (function(){
                 firstname: firstname,
                 lastname: lastname,
                 email: email,
-                password: password
+                password: password,
+                is_email_verified: false
             }
 
             const feedback = await client.db(process.env.DB_NAME).collection("users").insertOne(user);
@@ -173,11 +187,31 @@ const User = (function(){
 
     }
 
+    const sendVerificationEmail = async (email) => {
+
+        // use 
+        const feedback = await transporter.sendMail({
+            from: '"Notex 👻" <no-reply@example.com>',
+            to: email,
+            subject: "Please verify your email",
+            text: "Click this link to verify your email",
+            html: "<strong>Click here to verify email</strong>"
+        })
+
+        if(feedback){
+            return true;
+        }
+
+        return false;
+
+    }
+
 
     return {
         
         createUserAccount: createUserAccount,
-        loginUser: loginUser
+        loginUser: loginUser,
+        sendVerificationEmail: sendVerificationEmail
 
 
     }

@@ -9,7 +9,7 @@ require("dotenv").config();
 
 
 const store = new mongodbstore({
-    uri: "mongodb://localhost:27017/notex",
+    uri: "mongodb+srv://cyclobold_user:kM92hD8Amnfm6b9t@cluster0.qcoqo.mongodb.net/notex?retryWrites=true&w=majority",
     collection: "sessions"
 })
 
@@ -34,6 +34,16 @@ const PORT = process.env.PORT;
 
 //set the endpoint
 
+// root
+server.get("/", (request, response) => {
+
+    response.send({
+        message: "Server works fine"
+    })
+
+
+})
+
 //authentication
 server.post("/register-user", async (request, response) => {
 
@@ -52,6 +62,18 @@ server.post("/register-user", async (request, response) => {
        
 
         if(feedback.code == "success"){
+
+            // send verification email
+            const send_email_feedback = await User.sendVerificationEmail(email)
+
+            if(send_email_feedback){
+                return response.send({
+                    message: `Account created: ${feedback.message} `,
+                    code: "success",
+                    data: feedback.data
+                })
+            }
+
             return response.send({
                 message: `Account created: ${feedback.message} `,
                 code: "success",
